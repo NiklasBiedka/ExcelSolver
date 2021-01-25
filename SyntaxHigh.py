@@ -1,5 +1,6 @@
 import tkinter as tk
 import xlwings as xw
+import sys
 from DataEditorClasses import ExcelSheet
 
 class TextLineNumbers(tk.Canvas):
@@ -11,7 +12,6 @@ class TextLineNumbers(tk.Canvas):
         self.textwidget = text_widget
 
     def redraw(self, *args):
-        '''redraw line numbers'''
         self.delete("all")
 
         i = self.textwidget.index("@0,0")
@@ -51,7 +51,7 @@ class CustomText(tk.Text):
         # return what the actual widget returned
         return result      
 
-class Textfeld(tk.Frame):
+class Textfeld(tk.Frame, workbook = test.xlsm, worksheet = Testabelle1):
     def __init__(self, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
         self.text = CustomText(self)
@@ -70,13 +70,8 @@ class Textfeld(tk.Frame):
 
         self.loadText()
 
-        '''
-        self.text.insert("end", "blue\n red\nthree\n")
-        self.text.insert("end", "test\n",)
-        self.text.insert("end", "five\n")'''
-
-        self.closeBtn = tk.Button(self, text="Save", command=self.saveInput)
-        self.closeBtn.pack()
+        self.saveButton = tk.Button(self, text="Save", command=self.saveInput)
+        self.saveButton.pack()
 
     def hightlightSyntax(self): 
         self.keywords = ["keyword", "test"]
@@ -132,7 +127,15 @@ class Textfeld(tk.Frame):
         self.linenumbers.redraw()
         self.hightlightSyntax()
 
-if __name__ == "__main__":
+def openHighlighter():
     root = tk.Tk()
     Textfeld(root).pack(side="top", fill="both", expand=True)
+    root.mainloop()
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    try:
+        Textfeld(root, sys.argv[1], sys.argv[2]).pack(side="top", fill="both", expand=True)
+    except:
+        Textfeld(root).pack(side="top", fill="both", expand=True)
     root.mainloop()

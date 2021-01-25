@@ -1,15 +1,21 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 import xlwings as xw
+import sys
 from win32com import client
 import re
 from DataEditorClasses import Buttons, Entries, ExcelSheet
 
 
 class GUI(tk.Frame):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, worksheet = None, *args, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
-        self.excel = ExcelSheet('test.xlsm', 'Testabelle1')
+        self.wsheet = worksheet
+        print(self.wsheet)
+        try:
+            self.excel = ExcelSheet('test.xlsm', self.wsheet)
+        except:
+            self.excel = ExcelSheet('test.xlsm', 'Testabelle1')
         self.ws = self.excel.wsShadow
         self.functions = Functions(self.excel.wb, self.ws)
         self.frames(600, 360)
@@ -47,7 +53,7 @@ class GUI(tk.Frame):
             self.treeview.column(x, anchor='w', width=int(fwidth/3))
 
         self.treeview.insert("", 0, text="<Add New Data Item>")
-        self.functions.loadTree(self.treeview, )
+        self.functions.loadTree(self.treeview)
 
         self.treeview.grid(row=1, column=1)
 
@@ -288,5 +294,9 @@ class Functions():
 
 if __name__ == "__main__":
     root = tk.Tk()
-    GUI(root).pack(side="top", fill="both", expand=True)
+    try:
+        GUI(root, sys.argv[1]).pack(side="top", fill="both", expand=True)
+    except:
+        GUI(root).pack(side="top", fill="both", expand=True)
+   
     root.mainloop()
